@@ -14,7 +14,8 @@ export default function HomePage() {
         fetch('/api/user-in-room')
             .then(response => response.json())
             .then(data => {
-                setRoomCode(data.code)
+                setRoomCode(data.code);
+                console.log(roomCode)
             }
         )
     })
@@ -24,7 +25,7 @@ export default function HomePage() {
             <Grid container spacing={3}>
                 <Grid item xs={12} align="center">
                     <Typography variant="h3" compact="h3">
-                        House Party
+                       House Party
                     </Typography>
                 </Grid>
                 <Grid item xs={12} align="center">
@@ -41,15 +42,24 @@ export default function HomePage() {
         );
     }
 
+    const clearRoomCode = () => {
+        setRoomCode(null);
+    }
+
     return(
         <Router>
             <Switch>
                 <Route exact path='/' render={() => {
-                    return roomCode ? (<Redirect to={`/room/${roomCode}`}/>) :  renderHomePage()
+                    return roomCode ? (<Redirect to={`/room/${roomCode}`}/>) :  renderHomePage()  
                 }}/>
                 <Route path='/join' component={RoomJoinPage}/>
                 <Route path='/create' component={CreateRoomPage}/>
-                <Route path="/room/:roomCode" component={Room}/>
+                <Route 
+                    path="/room/:roomCode" 
+                    render={props => {
+                        return <Room {...props} leaveRoomCallback={clearRoomCode}/>;
+                    }}
+                />
             </Switch>
         </Router>
     )
